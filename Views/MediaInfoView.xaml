@@ -1,0 +1,344 @@
+﻿<UserControl x:Class="BingedIt.Views.MediaInfoView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:cm="clr-namespace:BingedIt.Common"
+             xmlns:cmd="clr-namespace:BingedIt.Commands" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:BingedIt.Views" xmlns:m="clr-namespace:BingedIt.Models"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:ui="http://schemas.modernwpf.com/2019" xmlns:vm="clr-namespace:BingedIt.ViewModels"
+             Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:MediaViewModel}}"
+             d:DesignHeight="450" d:DesignWidth="300"
+             DataContextChanged="OnDataContextChange" mc:Ignorable="d">
+    <UserControl.Resources>
+        <ToolTip x:Key="DefaultDragTT"
+                 Placement="RelativePoint">
+            <TextBlock>
+                <Run Text="Drag link or image here"/>
+                <LineBreak/>
+                <Run Text="Right click to view"/>
+            </TextBlock>
+        </ToolTip>
+        <DataTemplate x:Key="SeasonTemplate" DataType="{x:Type vm:SeasonViewModel}">
+            <DataTemplate.Resources>
+                <ToolTip x:Key="LinkTextBoxTT" Content="Ctrl+Click to follow" />
+            </DataTemplate.Resources>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="40" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <!--  Link  -->
+                <TextBlock VerticalAlignment="Center" Text="Link" />
+                <TextBox x:Name="ctlLink" Grid.Column="1"
+                         MinHeight="0" Margin="2,2,2,2"
+                         Padding="8,2,3,3" d:Text="https://google.com"
+                         Foreground="{DynamicResource SystemControlHyperlinkTextBrush}"
+                         Text="{Binding Link, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="{StaticResource LinkTextBoxTT}">
+                    <TextBox.InputBindings>
+                        <MouseBinding Command="{x:Static cmd:NavigateToLinkCommand.Instance}"
+                                      CommandParameter="{Binding Link, Mode=OneWay}"
+                                      Gesture="Ctrl+LeftClick" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <!--  Status  -->
+                <TextBlock Grid.Row="1" VerticalAlignment="Center"
+                           Text="Status" />
+                <ComboBox Grid.Row="1" Grid.Column="1"
+                          Grid.ColumnSpan="2" Margin="2"
+                          Padding="8,1,3,3"
+                          d:SelectedValue="{x:Static cm:Status.Unplanned}"
+                          ItemsSource="{Binding ., Source={StaticResource StatusProvider}}"
+                          SelectedValue="{Binding Status}"
+                          SelectedValuePath="EnumName" />
+                <!--  PlanDate (Planning)  -->
+                <TextBlock x:Name="txtDate" Grid.Row="2"
+                           VerticalAlignment="Center" Text="Date"
+                           Visibility="Collapsed" />
+                <DatePicker x:Name="ctlDate" Grid.Row="2"
+                            Grid.Column="1" Grid.ColumnSpan="2"
+                            Margin="2,2,0,2"
+                            SelectedDate="{Binding PlanDate}"
+                            Visibility="Collapsed" />
+                <!--  Progress (Binging)  -->
+                <TextBlock x:Name="txtProgress" Grid.Row="2"
+                           VerticalAlignment="Center" FontSize="13"
+                           Text="Binged" Visibility="Collapsed" />
+                <ui:NumberBox x:Name="ctlProgress" Grid.Row="2"
+                              Grid.Column="1" Grid.ColumnSpan="2"
+                              MinWidth="120" Margin="2,2,6,2"
+                              Minimum="0" SpinButtonPlacementMode="Inline"
+                              Visibility="Collapsed"
+                              Value="{Binding Progress}" />
+                <!--  Progress Reminder  -->
+                <DockPanel x:Name="rmdProgress" Grid.Row="3"
+                           Grid.ColumnSpan="3" Margin="2,2,6,2"
+                           Visibility="Collapsed">
+                    <CheckBox MinWidth="0" MinHeight="0"
+                              Padding="4,0,2,0" Content="Notify me on"
+                              DockPanel.Dock="Left"
+                              IsChecked="{Binding UseReminder}" />
+                    <DatePicker HorizontalAlignment="Stretch" DockPanel.Dock="Bottom"
+                                IsEnabled="{Binding UseReminder}"
+                                SelectedDate="{Binding RemindDate}" />
+                </DockPanel>
+                <!--  Rating (Binged)  -->
+                <TextBlock x:Name="txtRating" Grid.Row="2"
+                           VerticalAlignment="Center" Text="Rating"
+                           Visibility="Collapsed" />
+                <ComboBox x:Name="ctlRating" Grid.Row="2"
+                          Grid.Column="1" Grid.ColumnSpan="2"
+                          Margin="2" Padding="8,1,3,3"
+                          d:SelectedValue="{x:Static cm:Rating.Unrated}"
+                          ItemsSource="{Binding ., Source={StaticResource RatingProvider}}"
+                          SelectedValue="{Binding Rating}"
+                          SelectedValuePath="EnumName" Visibility="Collapsed" />
+                <!--  Notes  -->
+                <TextBlock Grid.Row="4" VerticalAlignment="Center"
+                           Text="Notes" />
+                <TextBox Grid.Row="4" Grid.Column="1"
+                         Grid.ColumnSpan="2" MinHeight="0"
+                         Margin="2,2,6,2" Padding="8,2,3,3"
+                         AcceptsReturn="True"
+                         Text="{Binding Comment, UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="{x:Static cm:Status.Planning}">
+                    <Setter TargetName="txtDate" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="ctlDate" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="{x:Static cm:Status.Binging}">
+                    <Setter TargetName="txtProgress" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="ctlProgress" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="rmdProgress" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Status}" Value="{x:Static cm:Status.Binged}">
+                    <Setter TargetName="txtRating" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="ctlRating" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Link}" Value="{x:Static sys:String.Empty}">
+                    <Setter TargetName="ctlLink" Property="ToolTip" Value="{x:Null}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <DataTemplate x:Key="PathTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Path=ContentStringFormat,RelativeSource={RelativeSource FindAncestor,AncestorType=ContentControl}}"/>
+                <Path Data="{Binding .}"
+                      Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource FindAncestor, AncestorType=FrameworkElement}}"
+                      Stretch="Uniform" MinWidth="14" MinHeight="14" MaxHeight="16" MaxWidth="16" Margin="2,0"/>
+            </StackPanel>
+        </DataTemplate>
+        <cm:BindingProxy x:Key="MediaListProxy" Value="{Binding Path=DataContext.(vm:TabViewModel.MediaList),RelativeSource={RelativeSource FindAncestor,AncestorType=Grid}}"/>
+        <cm:BindingProxy x:Key="ForegroundProxy" Value="{DynamicResource TextControlForeground}"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <!--  Hide Button  -->
+        <Button Padding="0" VerticalAlignment="Stretch"
+                ui:ControlHelper.CornerRadius="8,0,0,8" Click="OnHideButtonClick">
+            <Path MaxWidth="18"
+                  Data="{StaticResource DoubleArrowPath}"
+                  Fill="{DynamicResource TextControlForeground}"
+                  Stretch="Uniform" />
+        </Button>
+        <!--  Actual Content  -->
+        <Border Grid.Column="1" d:Background="#CCFFFFFF"
+                d:BorderBrush="#72000000"
+                Background="{DynamicResource SystemControlForegroundAltMediumHighBrush}"
+                BorderBrush="{DynamicResource TextControlBorderBrush}"
+                BorderThickness="0.6,1,0,0" CornerRadius="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" MinHeight="80" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!--  Header  -->
+                <DockPanel Grid.ColumnSpan="2">
+                    <!--  Delete Button  -->
+                    <Button MaxWidth="26" MaxHeight="26"
+                            Margin="1,3,4,3" Padding="2"
+                            Background="Transparent"
+                            Command="{Binding DialogDeleteCommand}"
+                            CommandParameter="{Binding Path=Value,Source={StaticResource ResourceKey=MediaListProxy}}"
+                            DockPanel.Dock="Right">
+                        <Path Data="{StaticResource TrashPath}" Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource FindAncestor, AncestorType=FrameworkElement}}" Stretch="Uniform"/>
+                    </Button>
+                    <ui:DropDownButton Margin="3,2" Padding="4,5,2,6"
+                                       DockPanel.Dock="Right">
+                        <Border Padding="10,6,12,6"
+                                Background="{Binding Foreground, ElementName=txtTitle}"
+                                BorderBrush="{DynamicResource TextControlBorderBursh}"
+                                BorderThickness="1" />
+                        <ui:DropDownButton.Flyout>
+                            <ui:Flyout Placement="Bottom" ShowMode="Auto">
+                                <StackPanel>
+                                    <ListBox HorizontalAlignment="Center"
+                                             ItemsSource="{Binding ., Source={StaticResource BrushesProvider}}"
+                                             SelectedItem="{Binding Foreground}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border x:Name="ColorBox" Margin="2"
+                                                        Padding="7.5"
+                                                        Background="{Binding .}"
+                                                        BorderBrush="{DynamicResource TextControlBorderBrush}" />
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding .}" Value="{x:Static Brushes.Transparent}">
+                                                        <Setter TargetName="ColorBox" Property="BorderThickness" Value="1" />
+                                                        <Setter TargetName="ColorBox" Property="Padding" Value="6.5" />
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid Columns="12" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ListBox.ItemContainerStyle>
+                                            <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="ListBoxItem">
+                                                <Setter Property="Padding" Value="0" />
+                                                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                                            </Style>
+                                        </ListBox.ItemContainerStyle>
+                                    </ListBox>
+                                    <Button Margin="0,5,0,0" HorizontalAlignment="Center"
+                                            Command="{x:Static vm:MediaViewModel.RandomizeBrushCommand}"
+                                            CommandParameter="{Binding .}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Width="20" Height="20"
+                                                  Data="{StaticResource DiePath}"
+                                                  Fill="{DynamicResource TextControlForeground}"
+                                                  Stretch="Uniform" />
+                                            <TextBlock Margin="5,0,0,0" Text="Randomize" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </ui:Flyout>
+                        </ui:DropDownButton.Flyout>
+                    </ui:DropDownButton>
+                    <!--  Title  -->
+                    <TextBox x:Name="txtTitle" Margin="2,0,0,0"
+                             VerticalAlignment="Center" d:Foreground="Black"
+                             d:Text="Title" ui:ControlHelper.PlaceholderText="Enter Title"
+                             Text="{Binding Title,UpdateSourceTrigger=PropertyChanged,Delay=250}">
+                        <TextBlock.Foreground>
+                            <MultiBinding Converter="{StaticResource FirstMultiValueConverter}">
+                                <Binding Converter="{StaticResource FilterConverter}"
+                                         Mode="OneWay" Path="Foreground" />
+                                <Binding Path="Value" Source="{StaticResource ForegroundProxy}" />
+                            </MultiBinding>
+                        </TextBlock.Foreground>
+                    </TextBox>
+                </DockPanel>
+                <!--  Poster Image  -->
+                <Grid Grid.Row="1" Grid.RowSpan="2"
+                        Margin="5,3" HorizontalAlignment="Center"
+                        VerticalAlignment="Top">
+                    <ui:ProgressRing Margin="5" IsActive="{Binding Path=Poster.IsLoading,Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <Button Style="{x:Null}" Command="{Binding DialogEditPosterCommand}" Background="Transparent" MouseMove="UpdateToolTipOnMouseMove" ToolTip="{StaticResource DefaultDragTT}"
+                                   ToolTipService.InitialShowDelay="250">
+                        <Image MinWidth="60" MinHeight="80"
+                                   MaxWidth="90" MaxHeight="120"
+                                   d:Source="{StaticResource DefaultImage}"
+                                   AllowDrop="True" DragEnter="CheckImageOnDragEnter"
+                                   Drop="AddImageOnDrop" 
+                                   DataContext="{Binding Poster,Mode=OneWay}"
+                                   Source="{Binding Source}">
+                        </Image>
+                    </Button>
+                </Grid>
+
+                <!--  Description  -->
+                <TextBlock Grid.Row="1" Grid.Column="1"
+                           Margin="2" Text="Description" />
+                <TextBox Grid.Row="2" Grid.Column="1"
+                         Margin="2,1,2,3" AcceptsReturn="True"
+                         MaxLines="4"
+                         Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                         TextWrapping="Wrap" />
+                <!--  Edit Menu  -->
+                <Border Grid.Row="3" Grid.ColumnSpan="2"
+                        Padding="3,0,2,2"
+                        BorderBrush="{DynamicResource TextControlBorderBrush}"
+                        BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="9*"/>
+                            <ColumnDefinition Width="10*"/>
+                        </Grid.ColumnDefinitions>
+                        <!--Add-->
+                        <Button Padding="0" HorizontalAlignment="Stretch" Margin="1,0" Grid.Column="0"
+                                Command="{Binding AddSeasonCommand}"
+                                Content="{StaticResource PlusPath}"
+                                ContentTemplate="{StaticResource PathTemplate}"
+                                ContentStringFormat="Add"/>
+                        <!--Delete-->
+                        <Button Padding="0" HorizontalAlignment="Stretch" Margin="1,0" Grid.Column="1"
+                                Content="{StaticResource TrashPath}"
+                                ContentTemplate="{StaticResource PathTemplate}"
+                                FontSize="13"
+                                ContentStringFormat="Remove"
+                                Command="{Binding DialogDeleteSeasonCommand}"
+                                CommandParameter="{Binding SelectedItem, ElementName=lstSeason}"/>
+                        <!--Move Up-->
+                        <Button Padding="0" HorizontalAlignment="Stretch" Margin="1,0" Grid.Column="2"
+                                Command="{Binding MoveSeasonUpCommand}"
+                                CommandParameter="{Binding SelectedIndex, ElementName=lstSeason}"
+                                Content="{StaticResource UpArrow}"
+                                ContentTemplate="{StaticResource PathTemplate}"
+                                ContentStringFormat="Up"
+                                VerticalAlignment="Stretch"/>
+                        <!--Move Down-->
+                        <Button Padding="0" HorizontalAlignment="Stretch" Margin="1,0" Grid.Column="3"
+                                Command="{Binding MoveSeasonDownCommand}"
+                                CommandParameter="{Binding SelectedIndex, ElementName=lstSeason}"
+                                Content="{StaticResource DownArrow}"
+                                ContentTemplate="{StaticResource PathTemplate}"
+                                ContentStringFormat="Down"
+                                VerticalAlignment="Stretch"/>
+                    </Grid>
+                </Border>
+                <!--  Content  -->
+                <ListBox x:Name="lstSeason" Grid.Row="4"
+                         Grid.ColumnSpan="2"
+                         d:ItemsSource="{d:SampleData ItemCount=5}"
+                         Background="{x:Null}"
+                         Focusable="False"
+                         ItemTemplate="{StaticResource SeasonTemplate}"
+                         ItemsSource="{Binding Seasons, Mode=OneWay}"
+                         ScrollViewer.CanContentScroll="True" VirtualizingPanel.ScrollUnit="Pixel"
+                         VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Padding" Value="4,4,6,4" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

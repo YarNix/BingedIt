@@ -1,0 +1,189 @@
+﻿<Window x:Class="BingedIt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cm="clr-namespace:BingedIt.Common"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:BingedIt"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:v="clr-namespace:BingedIt.Views"
+        xmlns:vm="clr-namespace:BingedIt.ViewModels"
+        x:Name="mainWin"
+        Title="BingedIt"
+        MinWidth="480"
+        MinHeight="360"
+        Width="800"
+        Height="450"
+        WindowState="Maximized"
+        ui:TitleBar.IsIconVisible="True"
+        Icon="\Resources\BingedIt.ico"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        Closing="OnClosing"
+        d:DataContext="{d:DesignInstance Type={x:Type vm:MainViewModel},
+                                         IsDesignTimeCreatable=True}"
+        mc:Ignorable="d">
+    <Window.Resources>
+        <Popup x:Key="SaveOverlay" Placement="Center" StaysOpen="True" AllowsTransparency="True">
+            <Grid>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="42">
+                    <Run Text="Saving Data..."/>
+                    <LineBreak/>
+                    <Run Text="The application will close shortly!"/>
+                </TextBlock>
+            </Grid>
+        </Popup>
+        <BlurEffect x:Key="Blur" RenderingBias="Quality"/>
+        <cm:BindingProxy x:Key="MainVMProxy" Value="{Binding Path=DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+        <cm:BindingProxy x:Key="ForegroundProxy" Value="{DynamicResource TextControlForeground}"/>
+        <!--  Tab Header  -->
+        <DataTemplate x:Key="TabHeaderTemplate" DataType="{x:Type vm:TabViewModel}">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="{Binding Title}" />
+                <Button Margin="4,1,1,0"
+                        Padding="0"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent"
+                        Command="{Binding DialogDeleteCommand}"
+                        CommandParameter="{Binding Path=ItemsSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}, Mode=OneWay}">
+                    <Path MaxWidth="10"
+                          MaxHeight="10"
+                          Data="{StaticResource CrossPath}"
+                          Fill="{DynamicResource TextControlForeground}"
+                          Stretch="Uniform" />
+                </Button>
+            </StackPanel>
+        </DataTemplate>
+        <ContextMenu x:Key="TabContextMenu" d:DataContext="{d:DesignInstance Type={x:Type vm:TabViewModel}}">
+            <MenuItem Command="{Binding Path=AddTabCommand}"
+                      DataContext="{Binding Path=DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                      Header="Add Tab" />
+            <Separator />
+            <MenuItem Command="{Binding DialogRenameCommand}" Header="Rename" />
+            <MenuItem Command="{Binding DialogDeleteCommand}"
+                      CommandParameter="{Binding ItemsSource, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl, AncestorLevel=2}}"
+                      Header="Delete" />
+        </ContextMenu>
+        <!--  View Template  -->
+        <DataTemplate DataType="{x:Type vm:MediaViewModel}">
+            <Border MaxWidth="120">
+                <StackPanel>
+                    <Image x:Name="imgPoster"
+                           MaxWidth="90"
+                           MaxHeight="120"
+                           Source="{Binding Path=Poster.Source, Mode=OneWay}"
+                           d:Source="{StaticResource DefaultImage}"
+                           Stretch="Uniform">
+                    </Image>
+                    <TextBlock FontSize="13"
+                               Tag="{DynamicResource TextControlForeground}"
+                               Text="{Binding Title, Mode=OneWay}"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap">
+                        <TextBlock.Foreground>
+                            <MultiBinding Converter="{StaticResource FirstMultiValueConverter}">
+                                <Binding Converter="{StaticResource FilterConverter}"
+                                         FallbackValue="{x:Null}"
+                                         Mode="OneWay"
+                                         Path="Foreground" />
+                                <Binding Path="Value" Source="{StaticResource ForegroundProxy}" />
+                            </MultiBinding>
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Poster.IsLoading}" Value="True">
+                    <Setter TargetName="imgPoster" Property="Source" Value="{StaticResource DefaultImage}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+        <!--  Template  -->
+        <DataTemplate DataType="{x:Type vm:TabViewModel}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <!--  Content  -->
+                <ListBox x:Name="lstMedia"
+                         Background="Transparent"
+                         Focusable="False"
+                         d:ItemTemplate="{StaticResource {DataTemplateKey DataType={x:Type vm:MediaViewModel}}}"
+                         ItemsSource="{Binding Path=MediaList}"
+                         d:ItemsSource="{d:SampleData ItemCount=10}"
+                         Grid.ColumnSpan="2"
+                         IsSynchronizedWithCurrentItem="True">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel HorizontalAlignment="Center" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="10,8,10,3" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.Panel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel />
+                                </ItemsPanelTemplate>
+                            </GroupStyle.Panel>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate DataType="{x:Type CollectionViewGroup}">
+                                    <TextBlock FontSize="15"
+                                               FontWeight="Bold"
+                                               Text="{Binding Path=Name}" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListBox.GroupStyle>
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding AddMediaCommand}" Header="Add" />
+                            <MenuItem Command="{Binding RefreshListCommand}" Header="Refresh" />
+                            <MenuItem Command="{Binding Path=DialogSettingCommand}"
+                                      DataContext="{Binding Path=Value, Source={StaticResource MainVMProxy}}"
+                                      Header="Settings" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                </ListBox>
+                <!--  Description  -->
+                <v:MediaInfoView x:Name="infoBox"
+                                 Grid.Column="1"
+                                 Visibility="Collapsed"
+                                 d:Visibility="Visible" 
+                                 DataContext="{Binding SelectedItem,Mode=TwoWay,ElementName=lstMedia}"/>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+
+    <TabControl x:Name="ctlTab"
+                d:ContentTemplate="{DynamicResource {DataTemplateKey DataType={x:Type vm:TabViewModel}}}"
+                IsSynchronizedWithCurrentItem="True"
+                ItemTemplate="{StaticResource TabHeaderTemplate}"
+                ItemsSource="{Binding Path=TabList}"
+                d:ItemsSource="{d:SampleData ItemCount=5}">
+        <ui:TabControlHelper.TabStripFooter>
+            <Button Margin="1,8,0,0"
+                    Padding="0"
+                    VerticalAlignment="Stretch"
+                    BorderThickness="0"
+                    Command="{Binding AddTabCommand}"
+                    Template="{StaticResource AddTabButtonTemplate}">
+                <Path MaxWidth="10"
+                      MaxHeight="10"
+                      Data="{StaticResource PlusPath}"
+                      Fill="{DynamicResource TextControlForeground}"
+                      Stretch="Uniform" />
+            </Button>
+        </ui:TabControlHelper.TabStripFooter>
+        <TabControl.ItemContainerStyle>
+            <Style BasedOn="{StaticResource DefaultTabItemStyle}" TargetType="TabItem">
+                <Setter Property="ContextMenu" Value="{StaticResource TabContextMenu}" />
+            </Style>
+        </TabControl.ItemContainerStyle>
+    </TabControl>
+</Window>

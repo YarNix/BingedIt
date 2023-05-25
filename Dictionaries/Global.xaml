@@ -1,0 +1,90 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="clr-namespace:BingedIt.Common"
+    xmlns:cv="clr-namespace:BingedIt.Converters"
+    xmlns:scv="clr-namespace:BingedIt.Converters.Specialized"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:vm="clr-namespace:BingedIt.ViewModels">
+
+    <!--  Color Definitions  -->
+
+    <!--  Corner Radius  -->
+    <CornerRadius x:Key="RoundCorner">5,5,5,5</CornerRadius>
+    <CornerRadius x:Key="MildCorner">3,3,3,3</CornerRadius>
+
+    <!--  Defaults  -->
+    <ImageSource x:Key="DefaultImage">pack://application:,,,/BingedIt;component/Resources/placeholder.png</ImageSource>
+    <ImageSource x:Key="ErrorImage">pack://application:,,,/BingedIt;component/Resources/placeholder_error.png</ImageSource>
+
+    <!--  Converters  -->
+    <cv:IsValueSetConverter x:Key="IsSetConverter" />
+    <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    <cv:MultiConverter x:Key="IsSetToVisibilityMultiConverter">
+        <StaticResource ResourceKey="IsSetConverter" />
+        <StaticResource ResourceKey="BoolToVisConverter" />
+    </cv:MultiConverter>
+    <cv:TypeToStringConverter x:Key="TypeToStringConverter" />
+    <cv:FirstNotNullMultiConverter x:Key="FirstMultiValueConverter" />
+    <scv:TransparentFilterConverter x:Key="FilterConverter"/>
+
+    <!--#region UI Path Data-->
+    <!--  Calendar with X  -->
+    <sys:String x:Key="UnplannedUI">m480 738-78 79q-9 9-21 9t-21-9q-9-9-9-22t9-22l78-78-79-78q-9-9-9-21t9-21q9-9 22-9t22 9l78 78 78-79q9-9 21-9t21 9q9 9 9 22t-9 22l-78 78 79 78q9 9 9 21t-9 21q-9 9-22 9t-22-9l-78-78ZM180 976q-24 0-42-18t-18-42V296q0-24 18-42t42-18h65v-28q0-14 9-23 9-9 23-9 14 0 24 9Q310 194 310 208v28h340v-28q0-14 9-23 9-9 23-9 14 0 24 9Q715 194 715 208v28h65q24 0 42 18t18 42v620q0 24-18 42t-42 18H180Zm0-60h600V486H180v430Zm0-490h600V296H180v130Zm0 0V296v130Z</sys:String>
+    <!--  Calendar  -->
+    <sys:String x:Key="PlanningUI">M180 976q-24 0-42-18t-18-42V296q0-24 18-42t42-18h65v-28q0-13.6 9.2-22.8 9.2-9.2 22.8-9.2 14 0 23.5 9.2Q310 194.4 310 208v28h340v-28q0-13.6 9.2-22.8 9.2-9.2 22.8-9.2 14 0 23.5 9.2Q715 194.4 715 208v28h65q24 0 42 18t18 42v620q0 24-18 42t-42 18H180Zm0-60h600V486H180v430Zm0-490h600V296H180v130Zm0 0V296v130Zm300 230q-17 0-28.5-11.5T440 616q0-17 11.5-28.5T480 576q17 0 28.5 11.5T520 616q0 17-11.5 28.5T480 656Zm-160 0q-17 0-28.5-11.5T280 616q0-17 11.5-28.5T320 576q17 0 28.5 11.5T360 616q0 17-11.5 28.5T320 656Zm320 0q-17 0-28.5-11.5T600 616q0-17 11.5-28.5T640 576q17 0 28.5 11.5T680 616q0 17-11.5 28.5T640 656ZM480 816q-17 0-28.5-11.5T440 776q0-17 11.5-28.5T480 736q17 0 28.5 11.5T520 776q0 17-11.5 28.5T480 816Zm-160 0q-17 0-28.5-11.5T280 776q0-17 11.5-28.5T320 736q17 0 28.5 11.5T360 776q0 17-11.5 28.5T320 816Zm320 0q-17 0-28.5-11.5T600 776q0-17 11.5-28.5T640 736q17 0 28.5 11.5T680 776q0 17-11.5 28.5T640 816Z</sys:String>
+    <!--  Eye  -->
+    <sys:String x:Key="BingingUI">M48 63q7 0 12-5 5-5 5-12 0-7-5-12-5-5-12-5-7 0-12 5-5 5-5 12 0 7 5 12 5 5 12 5Zm0-5.8q-4.7 0-7.95-3.25Q36.8 50.7 36.8 46q0-4.7 3.25-7.95Q43.3 34.8 48 34.8q4.7 0 7.95 3.25Q59.2 41.3 59.2 46q0 4.7-3.25 7.95Q52.7 57.2 48 57.2ZM48 76q-14.6 0-26.4-8.3Q9.8 59.4 4 46 9.8 32.6 21.6 24.3 33.4 16 48 16q14.6 0 26.4 8.3Q86.2 32.6 92 46 86.2 59.4 74.4 67.7 62.6 76 48 76Zm0-30Zm0 24q12 0 22.25-6.55Q80.5 57 85.75 46 80.5 35 70.25 28.55 60 22 48 22q-12 0-22.25 6.55Q15.5 35 10.25 46q5.5 11 15.55 17.45Q36 70 48 70Z</sys:String>
+    <!--  Clock  -->
+    <sys:String x:Key="OnHoldUI">M62.7 67.3l4.5-4.5-15.9-16V26.7h-6v22.5ZM48 88q-8.2 0-15.5-3.15-7.3-3.15-12.75-8.6-5.45-5.45-8.6-12.75Q8 56.2 8 48q0-8.2 3.15-15.5 3.15-7.3 8.6-12.75 5.45-5.45 12.75-8.6Q39.8 8 48 8q8.2 0 15.5 3.15 7.3 3.15 12.75 8.6 5.45 5.45 8.6 12.75Q88 39.8 88 48q0 8.2-3.15 15.5-3.15 7.3-8.6 12.75-5.45 5.45-12.75 8.6Q56.2 88 48 88Zm0-40Zm0 34q14 0 24-10 10-10 10-24 0-14-10-24-10-10-24-10-14 0-24 10-10 10-10 24 0 14 10 24 10 10 24 10Z</sys:String>
+    <!--  Check mark  -->
+    <sys:String x:Key="BingedUI">M18.9 35.7 7.7 24.5 9.85 22.35 18.9 31.4 38.1 12.2 40.25 14.35Z</sys:String>
+
+    <!--  Cheering Face ^^  -->
+    <sys:String x:Key="PerfectUI">M24 34.35q2.95 0 5.55-1.55 2.6-1.55 3.9-4.55h-18.9q1.35 3 3.925 4.55Q21.05 34.35 24 34.35ZM15.25 21.1l2.2-2.25 2.25 2.25 1.45-1.45-3.7-3.7-3.65 3.7Zm13.05 0 2.25-2.25 2.25 2.25 1.45-1.45-3.7-3.7-3.7 3.7ZM24 43q-3.9 0-7.375-1.5t-6.05-4.075Q8 34.85 6.5 31.375 5 27.9 5 24q0-3.95 1.5-7.425Q8 13.1 10.575 10.55 13.15 8 16.625 6.5 20.1 5 24 5q3.95 0 7.425 1.5Q34.9 8 37.45 10.55 40 13.1 41.5 16.575 43 20.05 43 24q0 3.9-1.5 7.375t-4.05 6.05Q34.9 40 31.425 41.5 27.95 43 24 43Zm0-19Zm0 16.75q7 0 11.875-4.9T40.75 24q0-7-4.875-11.875T24 7.25q-6.95 0-11.85 4.875Q7.25 17 7.25 24q0 6.95 4.9 11.85 4.9 4.9 11.85 4.9Z</sys:String>
+    <!--  Smile Face :)  -->
+    <sys:String x:Key="GoodUI">M124 85q4 0 7-3t3-7q0-4-3-7t-7-3q-4 0-7 3t-3 7q0 4 3 7t7 3Zm-56 0q4 0 7-3t3-7q0-4-3-7t-7-3q-4 0-7 3t-3 7q0 4 3 7t7 3Zm28 52q12 0 22-6 10-6 16-18h-8q-5 8-12 12-9 4-18 4-9 0-17-4-8-4-12-12h-9q5 12 16 18 10 6 22 6Zm0 35q-16 0-30-6t-24-16q-10-11-16-24T20 96q0-16 6-30 6-14 16-24 11-10 24-16t30-6q16 0 30 6 14 6 24 16 10 10 16 24 6 14 6 30 0 16-6 30t-16 24q-10 10-24 16-14 6-30 6Zm0-76Zm0 67q28 0 48-20t19-47q0-28-20-48T96 29q-28 0-48 20T29 96q0 28 20 48t47 19Z</sys:String>
+    <!--  Neutral Face o_o  -->
+    <sys:String x:Key="OkayUI">M124 85q4 0 7-3t3-7q0-4-3-7t-7-3q-4 0-7 3t-3 7q0 4 3 7t7 3ZM68 85q4 0 7-3t3-7q0-4-3-7t-7-3q-4 0-7 3t-3 7q0 4 3 7t7 3Zm4 38h48v-8H72Zm24 49q-16 0-30-6t-24-16q-10-11-16-24T20 96q0-16 6-30 6-14 16-24 11-10 24-16t30-6q16 0 30 6 14 6 24 16 10 10 16 24 6 14 6 30 0 16-6 30t-16 24q-10 10-24 16-14 6-30 6Zm0-76Zm0 67q28 0 48-20t19-47q0-28-20-48T96 29q-28 0-48 20T29 96q0 28 20 48t47 19Z</sys:String>
+    <!--  Sad Face :(  -->
+    <sys:String x:Key="BadUI">M124 85q4 0 7-3t3-7q0-4-3-7t-7-3q-4 0-7 3t-3 7q0 4 3 7t7 3Zm-56 0q4 0 7-3t3-7q0-4-3-7t-7-3q-4 0-7 3t-3 7q0 4 3 7t7 3Zm28 23q-12 0-22 7t-16 19h9q4-8 12-13 8-5 17-5 9 0 17 5 8 4 12 13h8q-5-12-16-19-10-7-22-7Zm0 64q-16 0-30-6t-24-16q-10-11-16-24t-6-30q0-16 6-30 6-14 16-24 11-10 24-16t30-6q16 0 30 6 14 6 24 16 10 10 16 24 6 14 6 30 0 16-6 30t-16 24q-10 10-24 16-14 6-30 6Zm0-76Zm0 67q28 0 48-20t19-47q0-28-20-48T96 29q-28 0-48 20t-19 47q0 28 20 48t47 19Z</sys:String>
+    <!--  Angry Face >:(  -->
+    <sys:String x:Key="TerribleUI">M96 172q-16 0-30-6-14-6-24-16-10-11-16-24-6-14-6-30 0-16 6-30 6-14 16-24 10-10 24-16 14-6 30-6 16 0 30 6t24 16q10 10 16 24 6 14 6 30 0 16-6 30t-16 24q-11 10-24 16t-30 6Zm0-9q28 0 47-20 20-20 20-47 0-28-20-48T96 29q-28 0-48 20T29 96q0 28 20 47 19 20 47 20Zm15-78 3-2q0 4 3 7 3 3 7 3 4 0 7-3t3-7q0-3-1-5t-3-3l6-3-4-6-23 13Zm-29 0 3-6-23-13-4 6 6 3q-2 1-3 3-1 2-1 5 0 4 3 7t7 3q4 0 7-3t3-7Zm14 19q-13 0-23 8t-14 22h74q-5-12-15-21t-22-9Zm0-8Z</sys:String>
+    
+    <!--  Plus  -->
+    <PathGeometry x:Key="PlusPath">M450 856V606H200v-60h250V296h60v250h250v60H510v250h-60Z</PathGeometry>
+    <!--  Cross X  -->
+    <PathGeometry x:Key="CrossPath">m249 849-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z</PathGeometry>
+    <!--  Dice  -->
+    <PathGeometry x:Key="DiePath">M60 142q4 0 7-3 3-3 3-7 0-4-3-7-3-3-7-3-4 0-7 3-3 3-3 7 0 4 3 7 3 3 7 3Zm0-72q4 0 7-3 3-3 3-7 0-4-3-7-3-3-7-3-4 0-7 3-3 3-3 7 0 4 3 7 3 3 7 3Zm36 36q4 0 7-3 3-3 3-7 0-4-3-7-3-3-7-3-4 0-7 3-3 3-3 7 0 4 3 7 3 3 7 3Zm36 36q4 0 7-3 3-3 3-7 0-4-3-7-3-3-7-3-4 0-7 3-3 3-3 7 0 4 3 7 3 3 7 3Zm0-72q4 0 7-3 3-3 3-7 0-4-3-7-3-3-7-3-4 0-7 3-3 3-3 7 0 4 3 7 3 3 7 3ZM36 168q-5 0-8-4-4-3-4-8V36q0-5 4-8 3-4 8-4h120q5 0 8 4 4 4 4 8v120q0 5-4 8-4 4-8 4Zm0-12h120V36H36v120ZM36 36v120V36Z</PathGeometry>
+    <!--  Double Right Arrow  -->
+    <PathGeometry x:Key="DoubleArrowPath">m242 856 210-280-210-280h74l210 280-210 280h-74Zm252 0 210-280-210-280h74l210 280-210 280h-74Z</PathGeometry>
+    <!--  Trash Can  -->
+    <PathGeometry x:Key="TrashPath">M261 936q-24.75 0-42.375-17.625T201 876V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306ZM367 790h60V391h-60v399Zm166 0h60V391h-60v399ZM261 306v570-570Z</PathGeometry>
+    <!--  Arrow Up  -->
+    <PathGeometry x:Key="UpArrow">m288 702-33-33 226-226 226 226-33 33-193-193-193 193Z</PathGeometry>
+    <!--  Arrow Down  -->
+    <PathGeometry x:Key="DownArrow">M481 705 255 479l33-33 193 193 193-193 33 33-226 226Z</PathGeometry>
+    <!--#endregion-->
+    
+    <!--  DataProvider  -->
+    <ObjectDataProvider
+        x:Key="StatusProvider"
+        MethodName="GetNames"
+        ObjectType="{x:Type cm:UIEnumProvider}">
+        <ObjectDataProvider.MethodParameters>
+            <x:Type Type="{x:Type cm:Status}" />
+        </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+    <ObjectDataProvider
+        x:Key="RatingProvider"
+        MethodName="GetNames"
+        ObjectType="{x:Type cm:UIEnumProvider}">
+        <ObjectDataProvider.MethodParameters>
+            <x:Type Type="{x:Type cm:Rating}" />
+        </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+    <ObjectDataProvider x:Key="BrushesProvider" ObjectType="{x:Type cm:BrushesProvider}" MethodName="ProvideValue"/>
+</ResourceDictionary>

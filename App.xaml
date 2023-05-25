@@ -1,0 +1,19 @@
+﻿<Application
+    x:Class="BingedIt.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cm="clr-namespace:BingedIt.Common"
+    xmlns:local="clr-namespace:BingedIt"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    StartupUri="Views\MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary Source="Dictionaries\Global.xaml">
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+                <ResourceDictionary Source="Dictionaries\Templates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
